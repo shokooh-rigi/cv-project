@@ -43,13 +43,6 @@ class BiographyFactory(factory.django.DjangoModelFactory):
     last_name = factory.Faker('last_name', locale='fa')
     birth_date = datetime.date(year=1988, month=5, day=12)
 
-    real_person = factory.SubFactory('entity.factories.RealPersonFactory')
-    certificate_type = factory.fuzzy.FuzzyChoice(enums.CertificateType.choices, getter=lambda x: x[0])
-    certificate_description = '-'
-    received_date = datetime.date(2023, 5, 12)
-    course_duration = FuzzyInteger(10, 200)
-    exporter = factory.Faker('name', locale='fa')
-
 
 class CertificateFactory(factory.django.DjangoModelFactory):
     class Meta:
