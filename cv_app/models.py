@@ -202,6 +202,8 @@ class Certificate(models.Model):
     course_duration = models.CharField(
         max_length=50,
         verbose_name=_('مدت دوره'),
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -224,6 +226,7 @@ class Skill(models.Model):
     level = models.CharField(
         choices=enums.SkillLevel.choices,
         verbose_name=_('سطح'),
+        max_length=20,
     )
 
     class Meta:

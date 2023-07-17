@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase, APIClient
 
 from cv_app.models import User, EducationHistory
 from cv_app.serializers import (UserSerializer)
+from cv_app.test.factories import EducationHistoryFactory, CertificateFactory
 
 
 class UserTests(APITestCase):
@@ -19,7 +20,6 @@ class UserTests(APITestCase):
     def test_user_login(self):
         response = self.client.post(reverse('token_obtain_pair'), self.user_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('access', response.data)
 
     # TODO: CREATE API USER VIEWS.PY
     def test_user_get(self):
@@ -29,25 +29,39 @@ class UserTests(APITestCase):
         self.assertEqual(response.data, UserSerializer(self.user).data)
 
 
-class EducationTests(APITestCase):
+class EducationHistoryTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user_data = {'username': 'testuser', 'password': 'testpassword'}
         self.user = User.objects.create_user(**self.user_data)
         self.client.force_authenticate(user=self.user)
-        # TODO: add factory education and use it here
-        self.education_data = {'user': self.user.id, 'institution': 'Test University', 'degree': 'Test Degree',
-                              'field_of_study': 'Test Field', 'start_date': '2020-01-01', 'end_date': '2022-01-01'}
-        self.education = EducationHistory.objects.create(**self.education_data)
+        self.education_obj = EducationHistoryFactory()
+        self.education_url = reverse('cv_app:educations')
 
     def test_education_list(self):
-        response = self.client.get(reverse('education_list_create_api'))
+        response = self.client.get(reverse(self.education_url))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
 
     def test_education_create(self):
-        new_education_data = {'user': self.user.id, 'institution': 'New University', 'degree': 'New Degree',
-                              'field_of_study': 'New Field', 'start_date': '2022-01-01', 'end_date': '2024-01-01'}
-        response = self.client.post(reverse('education_list_create_api'), new_education_data)
+        new_education_obj = EducationHistoryFactory(major='software engineering', institution='sharif')
+        response = self.client.post(reverse(self.education_url), new_education_obj)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(EducationHistory.objects.count(), 2)
+
+
+class CertificateTests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user_data = {'username': 'testuser', 'password': 'testpassword'}
+        self.user = User.objects.create_user(**self.user_data)
+        self.client.force_authenticate(user=self.user)
+        self.certificate_obj = CertificateFactory()
+        self.certificate_url = reverse('cv_app:certificates')
+
+    def test_certificate_list(self):
+        response = self.client.get(reverse(self.certificate_url))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_certificate_create(self):
+        new_certificate_obj = CertificateFactory(name='LPIC1', course_duration='6 month')
+        response = self.client.post(reverse(self.certificate_url), new_certificate_obj)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

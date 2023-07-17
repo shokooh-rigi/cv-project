@@ -22,6 +22,7 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
+router.register('biography', views.BiographyViewSet)
 router.register('educations', views.EducationViewSet)
 router.register('certificates', views.CertificateViewSet)
 router.register('skills', views.SkillListViewSet)
