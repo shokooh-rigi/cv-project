@@ -1,12 +1,11 @@
+import datetime
 import string
 
 import factory
-import datetime
 from factory import fuzzy
-from factory.fuzzy import FuzzyInteger
 
-from cv_app import models
 from cv_app import enums
+from cv_app import models
 
 
 class UniversityFactory(factory.django.DjangoModelFactory):
